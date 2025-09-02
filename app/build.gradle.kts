@@ -107,6 +107,9 @@ dependencies {
 
     implementation(libs.converter.gson)
 
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.hilt.navigation.compose.v110)
+
     // Paging
     implementation(libs.paging.compose)
 

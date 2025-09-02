@@ -21,6 +21,7 @@ paging = "3.3.6"
 hilt = "2.51.1"
 destinations = "2.2.0"
 ksp = "2.0.21-1.0.25"
+ui = "1.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -63,6 +64,7 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 
 destinations-core = { group = "io.github.raamcosta.compose-destinations", name = "core", version.ref = "destinations" }
 destinations-ksp = { group = "io.github.raamcosta.compose-destinations", name = "ksp", version.ref = "destinations" }
+ui = { group = "androidx.compose.ui", name = "ui", version.ref = "ui" }
 
 
 [plugins]

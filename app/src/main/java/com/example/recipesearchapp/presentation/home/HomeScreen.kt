@@ -1,6 +1,7 @@
 
 package com.example.recipesearchapp.presentation.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,7 +27,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.example.recipesearchapp.domain.model.Recipe
+import coil.compose.rememberAsyncImagePainter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import com.example.recipesearchapp.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -315,9 +322,9 @@ fun RecipeListItem(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(16.dp), // Using your preferred shape
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp) // Using your preferred elevation
     ) {
         Row(
             modifier = Modifier
@@ -332,14 +339,17 @@ fun RecipeListItem(
                     .clip(RoundedCornerShape(8.dp))
                     .background(Color.LightGray)
             ) {
-                if (recipe.image.isNotEmpty()) {
-                    AsyncImage(
-                        model = recipe.image,
-                        contentDescription = recipe.title,
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                // The placeholder logic is now applied here
+                AsyncImage(
+                    model = recipe.image,
+                    contentDescription = recipe.title,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    // This will show while the image is loading
+                    placeholder = painterResource(id = R.drawable.ic_default_recipe_image),
+                    // This will show if the image fails to load
+                    error = painterResource(id = R.drawable.ic_default_recipe_image)
+                )
             }
 
             Spacer(modifier = Modifier.width(12.dp))

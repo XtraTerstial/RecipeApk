@@ -33,6 +33,8 @@ fun FavoriteScreen(
 ) {
     val state = favoriteViewModel.state
 
+
+
     LaunchedEffect(Unit) {
         favoriteViewModel.onEvent(FavoriteScreenEvent.LoadFavorites)
     }

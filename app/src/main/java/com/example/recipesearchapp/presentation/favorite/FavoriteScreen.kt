@@ -113,7 +113,7 @@ fun FavoriteScreen(
                         Spacer(modifier = Modifier.height(16.dp))
 
                         Text(
-                            text = "No Favourite Recipes Yet",
+                            text = "Your Favorite Recipes Live Here",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium,
                             color = Color.Gray
@@ -122,7 +122,7 @@ fun FavoriteScreen(
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text(
-                            text = "Start adding recipes to your favorites\nby tapping the heart icon",
+                            text = "Find a recipe you love and tap the heart\\nto save it for later.",
                             fontSize = 14.sp,
                             color = Color.Gray,
                             textAlign = TextAlign.Center

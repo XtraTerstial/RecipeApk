@@ -70,7 +70,7 @@ fun HomeScreen(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "Hey Name",
+                            text = "Hey Devbrat Pradhan, ",
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium,
                             color = Color.Black

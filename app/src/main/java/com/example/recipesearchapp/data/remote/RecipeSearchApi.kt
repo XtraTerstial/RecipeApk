@@ -19,7 +19,7 @@ interface RecipeSearchApi  {
         @Query("apiKey") apikey: String = API_KEY
     ): RecipeSearchResponseDto
     companion object{
-        const val API_KEY = "8626b8c94f9e490291f7fcd1ccffa6bf"
+        const val API_KEY = "f282aba26e6a4f43a6b2f00c9d760122"
         const val BASE_URL = "https://api.spoonacular.com/"
     }
 }

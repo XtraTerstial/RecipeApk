@@ -1,39 +1,57 @@
-
 package com.example.recipesearchapp.presentation.home
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
-import coil.request.ImageRequest
-import com.example.recipesearchapp.domain.model.Recipe
-import coil.compose.rememberAsyncImagePainter
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import com.example.recipesearchapp.R
+import com.example.recipesearchapp.domain.model.Recipe
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,171 +59,185 @@ fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     val state = homeViewModel.state
+    val pullToRefreshState = rememberPullToRefreshState()
+    val verticalScrollState = rememberScrollState()
 
-    Column(
+    println("isLoading: ${state.isLoading}")
+    println("isSearching: ${state.isSearching}")
+
+    PullToRefreshBox(
+        state = pullToRefreshState,
+        isRefreshing = (state.isLoading && state.isSearching),
+        onRefresh = { homeViewModel.onEvent(HomeScreenEvent.Refresh) },
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(Color.Gray.copy(alpha = 0.6f))
     ) {
-        // Top Bar
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .background(Color.White)
-                .padding(16.dp)
         ) {
-            // Header
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "👋",
-                            fontSize = 20.sp
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Hey Devbrat Pradhan, ",
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.Black
-                        )
-                    }
-                    Text(
-                        text = "Discover tasty and healthy receipt",
-                        fontSize = 14.sp,
-                        color = Color.Gray
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Search Bar
-            OutlinedTextField(
-                value = state.searchQuery,
-                onValueChange = {
-                    homeViewModel.onEvent(HomeScreenEvent.OnSearchQuery(it))
-                },
-                placeholder = {
-                    Text(
-                        text = "Search any recipe",
-                        color = Color.Gray
-                    )
-                },
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = "Search",
-                        tint = Color.Gray
-                    )
-                },
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(56.dp),
-                shape = RoundedCornerShape(28.dp),
-                colors = OutlinedTextFieldDefaults.colors(
-                    unfocusedBorderColor = Color.LightGray,
-                    focusedBorderColor = Color.Gray,
-                    unfocusedContainerColor = Color(0xFFF5F5F5),
-                    focusedContainerColor = Color(0xFFF5F5F5)
-                )
-            )
-        }
+                    .verticalScroll(verticalScrollState)
+                    .background(Color.White)
+                    .padding(16.dp)
+            ) {
+                // Header
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "👋",
+                                fontSize = 20.sp
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Hey Devbrat Pradhan, ",
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Medium,
+                                color = Color.Black
+                            )
+                        }
+                        Text(
+                            text = "Discover tasty and healthy receipt",
+                            fontSize = 14.sp,
+                            color = Color.Gray
+                        )
+                    }
+                }
 
-        // Content
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White),
-            contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // Popular Recipes Section
-            item {
-                Column {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                // Search Bar
+                OutlinedTextField(
+                    value = state.searchQuery,
+                    onValueChange = {
+                        homeViewModel.onEvent(HomeScreenEvent.OnSearchQuery(it))
+                    },
+                    placeholder = {
+                        Text(
+                            text = "Search any recipe",
+                            color = Color.Gray
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(
+                            Icons.Default.Search,
+                            contentDescription = "Search",
+                            tint = Color.Gray
+                        )
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(28.dp),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        unfocusedBorderColor = Color.LightGray,
+                        focusedBorderColor = Color.Gray,
+                        unfocusedContainerColor = Color(0xFFF5F5F5),
+                        focusedContainerColor = Color(0xFFF5F5F5)
+                    )
+                )
+            }
+
+            // Content
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Popular Recipes Section
+                item {
+                    Column {
+                        Text(
+                            text = "Popular Recipes",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = Color.Black
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            contentPadding = PaddingValues(horizontal = 4.dp)
+                        ) {
+                            if (state.isPopularRecipesLoading) {
+                                item {
+                                    Box(
+                                        modifier = Modifier.size(200.dp, 120.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator()
+                                    }
+                                }
+                            } else {
+                                items(state.popularRecipes.take(5)) { recipe ->
+                                    PopularRecipeCard(
+                                        recipe = recipe,
+                                        onFavoriteClick = {
+                                            homeViewModel.onEvent(HomeScreenEvent.ToggleFavorite(recipe))
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // All Recipes Section
+                item {
                     Text(
-                        text = "Popular Recipes",
+                        text = "All recipes",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = Color.Black
                     )
+                }
 
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        contentPadding = PaddingValues(horizontal = 4.dp)
-                    ) {
-                        if (state.isPopularRecipesLoading) {
-                            item {
-                                Box(
-                                    modifier = Modifier.size(200.dp, 120.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
-                            }
-                        } else {
-                            items(state.popularRecipes.take(5)) { recipe ->
-                                PopularRecipeCard(
-                                    recipe = recipe,
-                                    onFavoriteClick = {
-                                        homeViewModel.onEvent(HomeScreenEvent.ToggleFavorite(recipe))
-                                    }
-                                )
-                            }
+                // Recipe List
+                if (state.isLoading) {
+                    item {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
                         }
                     }
-                }
-            }
-
-            // All Recipes Section
-            item {
-                Text(
-                    text = "All recipes",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.Black
-                )
-            }
-
-            // Recipe List
-            if (state.isLoading) {
-                item {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        CircularProgressIndicator()
+                } else if (state.error.isNotEmpty()) {
+                    item {
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0))
+                        ) {
+                            Text(
+                                text = state.error,
+                                color = Color(0xFFE65100),
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
                     }
-                }
-            } else if (state.error.isNotEmpty()) {
-                item {
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFF3E0))
-                    ) {
-                        Text(
-                            text = state.error,
-                            color = Color(0xFFE65100),
-                            modifier = Modifier.padding(16.dp)
+                } else {
+                    items(state.recipes) { recipe ->
+                        RecipeListItem(
+                            recipe = recipe,
+                            onFavoriteClick = {
+                                homeViewModel.onEvent(HomeScreenEvent.ToggleFavorite(recipe))
+                            }
                         )
                     }
-                }
-            } else {
-                items(state.recipes) { recipe ->
-                    RecipeListItem(
-                        recipe = recipe,
-                        onFavoriteClick = {
-                            homeViewModel.onEvent(HomeScreenEvent.ToggleFavorite(recipe))
-                        }
-                    )
                 }
             }
         }

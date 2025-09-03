@@ -79,7 +79,7 @@ class RecipeRepoImpl @Inject constructor(
     override suspend fun getAllFavoriteRecipe(): Flow<Resource<List<Recipe>>> {
         return flow {
             emit(Resource.Loading(true))
-            val apiResponse = try {
+            val localDbResponse = try {
                 dao.getAllFavoriteRecipes()
             } catch (e: HttpException) {
                 e.printStackTrace()
@@ -90,9 +90,9 @@ class RecipeRepoImpl @Inject constructor(
                 emit(Resource.Error("Couldn't load data"))
                 null
             }
-            if(apiResponse!=null){
+            if(localDbResponse!=null){
                 emit(Resource.Success(
-                    data = apiResponse.map { it.toRecipe() }
+                    data = localDbResponse.map { it.toRecipe() }
                 ))
                 emit(Resource.Loading(false))
                 return@flow
